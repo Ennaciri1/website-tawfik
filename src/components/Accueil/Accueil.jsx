@@ -65,10 +65,7 @@ const Accueil = ({ onNavigate }) => {
 
   return (
     <div className="accueil-container">
-      <header className="accueil-header">
-        <h1 className="accueil-title">Films Populaires</h1>
-        <p className="accueil-subtitle">Découvrez les films les plus populaires du moment</p>
-      </header>
+  
       
       <div className="movies-grid">
         {movies.map(movie => (
