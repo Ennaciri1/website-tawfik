@@ -1,51 +1,84 @@
 // DetailsFilm.jsx
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import './DetailsFilm.css';
 
-// Configuration API - ajustez le chemin selon votre structure
+// Configuration API
 const API_KEY = '2f1257f810d98d9c3d3160e53a8d8c12';
 const MOVIE_DETAILS_URL = (movieId) => `https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}`;
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
-const DetailsFilm = ({ movie, onNavigate }) => {
-  const [movieDetails, setMovieDetails] = useState(movie);
-  const [loading, setLoading] = useState(false);
+const DetailsFilm = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [movieDetails, setMovieDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (movie && !movie.isCustom && movie.id) {
-      const fetchMovieDetails = async () => {
-        try {
-          setLoading(true);
-          setError('');
-          const response = await fetch(MOVIE_DETAILS_URL(movie.id));
+    const fetchMovieDetails = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        
+        // D'abord, essayer de récupérer les données du sessionStorage
+        const storedMovie = sessionStorage.getItem('selectedMovie');
+        if (storedMovie) {
+          const movie = JSON.parse(storedMovie);
+          setMovieDetails(movie);
+          
+          // Si ce n'est pas un film personnalisé, récupérer les détails complets
+          if (!movie.isCustom && id) {
+            const response = await fetch(MOVIE_DETAILS_URL(id));
+            if (response.ok) {
+              const data = await response.json();
+              setMovieDetails(data);
+            }
+          }
+        } else if (id) {
+          // Si pas de données stockées, récupérer directement les détails
+          const response = await fetch(MOVIE_DETAILS_URL(id));
           if (!response.ok) throw new Error('Film non trouvé');
           const data = await response.json();
           setMovieDetails(data);
-        } catch (err) {
-          setError('Impossible de charger les détails complets du film');
-          console.error('Erreur détails film:', err);
-        } finally {
-          setLoading(false);
+        } else {
+          throw new Error('Aucune information de film disponible');
         }
-      };
+      } catch (err) {
+        setError('Impossible de charger les détails du film');
+        console.error('Erreur détails film:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      fetchMovieDetails();
-    }
-  }, [movie]);
+    fetchMovieDetails();
+  }, [id]);
 
-  if (!movie) {
+  const handleBack = () => {
+    navigate(-1); // Retour à la page précédente
+  };
+
+  if (loading) {
+    return (
+      <div className="details-film-container">
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+          <p>Chargement des détails...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !movieDetails) {
     return (
       <div className="details-film-container">
         <div className="error-container">
           <div className="error-message">
             <span className="error-icon">❌</span>
-            <p>Film non trouvé</p>
-            <button 
-              onClick={() => onNavigate('accueil')}
-              className="back-button"
-            >
-              Retour à l'accueil
+            <p>{error || 'Film non trouvé'}</p>
+            <button onClick={handleBack} className="back-button">
+              Retour
             </button>
           </div>
         </div>
@@ -75,20 +108,10 @@ const DetailsFilm = ({ movie, onNavigate }) => {
   return (
     <div className="details-film-container">
       <div className="details-header">
-        <button 
-          onClick={() => onNavigate('accueil')}
-          className="back-button"
-        >
+        <button onClick={handleBack} className="back-button">
           ← Retour
         </button>
       </div>
-
-      {loading && (
-        <div className="loading-overlay">
-          <div className="loading-spinner"></div>
-          <p>Chargement des détails...</p>
-        </div>
-      )}
 
       <div className="movie-details-card">
         <div className="movie-poster-section">
@@ -201,13 +224,6 @@ const DetailsFilm = ({ movie, onNavigate }) => {
                   </span>
                 ))}
               </div>
-            </div>
-          )}
-
-          {error && (
-            <div className="warning-message">
-              <span className="warning-icon">⚠️</span>
-              <p>{error}</p>
             </div>
           )}
         </div>

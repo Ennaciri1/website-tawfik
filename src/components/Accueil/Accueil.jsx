@@ -1,8 +1,8 @@
-// Accueil.js
+// src/components/Accueil/Accueil.jsx
 import React, { useState, useEffect } from 'react';
-import './Accueil.css';
-import { POPULAR_MOVIES_URL } from '../../config/api-config';
 import MovieCard from '../MovieCard/MovieCard';
+import { POPULAR_MOVIES_URL } from '../../config/api-config';
+import './Accueil.css';
 
 const Accueil = ({ onNavigate }) => {
   const [movies, setMovies] = useState([]);

@@ -1,34 +1,37 @@
-// Navigation.js
-import React from 'react';
+
+import { Link, useLocation } from 'react-router-dom';
 import './Navigation.css';
 
-const Navigation = ({ currentPage, onNavigate }) => {
+const Navigation = () => {
+  const location = useLocation();
+  
   const menuItems = [
-    { id: 'accueil', label: 'Accueil', icon: '🏠' },
-    { id: 'recherche', label: 'Recherche', icon: '🔍' },
-    { id: 'ajouter', label: 'Ajouter un film', icon: '➕' }
+    { id: 'accueil', path: '/accueil', label: 'Accueil', icon: '🏠' },
+    { id: 'recherche', path: '/recherche', label: 'Recherche', icon: '🔍' },
+    { id: 'ajouter', path: '/ajouter', label: 'Ajouter un film', icon: '➕' }
   ];
+
+  const isActive = (path) => {
+    return location.pathname === path || (location.pathname === '/' && path === '/accueil');
+  };
 
   return (
     <nav className="navigation">
       <div className="nav-container">
         <div className="nav-header">
-          <button 
-            onClick={() => onNavigate('accueil')}
-            className="nav-logo"
-          >
+          <Link to="/accueil" className="nav-logo">
             🎬 Movie Manager
-          </button>
+          </Link>
         </div>
         <div className="nav-menu">
           {menuItems.map(item => (
-            <button
+            <Link
               key={item.id}
-              onClick={() => onNavigate(item.id)}
-              className={`nav-item ${currentPage === item.id ? 'nav-item-active' : ''}`}
+              to={item.path}
+              className={`nav-item ${isActive(item.path) ? 'nav-item-active' : ''}`}
             >
               {item.icon} {item.label}
-            </button>
+            </Link>
           ))}
         </div>
       </div>
