@@ -1,13 +1,15 @@
 // src/components/Accueil/Accueil.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MovieCard from '../MovieCard/MovieCard';
 import { POPULAR_MOVIES_URL } from '../../config/api-config';
 import './Accueil.css';
 
-const Accueil = ({ onNavigate }) => {
+const Accueil = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPopularMovies = async () => {
@@ -30,7 +32,9 @@ const Accueil = ({ onNavigate }) => {
   }, []);
 
   const handleMovieClick = (movie) => {
-    onNavigate('details', movie);
+    // Stocker les données du film dans le sessionStorage
+    sessionStorage.setItem('selectedMovie', JSON.stringify(movie));
+    navigate(`/details/${movie.id}`);
   };
 
   if (loading) {
@@ -65,7 +69,10 @@ const Accueil = ({ onNavigate }) => {
 
   return (
     <div className="accueil-container">
-  
+      <header className="accueil-header">
+        <h1 className="accueil-title">Films Populaires</h1>
+        <p className="accueil-subtitle">Découvrez les films les plus populaires du moment</p>
+      </header>
       
       <div className="movies-grid">
         {movies.map(movie => (

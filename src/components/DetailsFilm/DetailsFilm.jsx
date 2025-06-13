@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './DetailsFilm.css';
+import { API_KEY } from '../../config/api-config';
+
 
 // Configuration API
-const API_KEY = '2f1257f810d98d9c3d3160e53a8d8c12';
 const MOVIE_DETAILS_URL = (movieId) => `https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}`;
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
