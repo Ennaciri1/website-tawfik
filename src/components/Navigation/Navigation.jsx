@@ -19,9 +19,9 @@ const Navigation = () => {
     <nav className="navigation">
       <div className="nav-container">
         <div className="nav-header">
-          <Link to="/accueil" className="nav-logo">
+          <div to="/accueil" className="nav-logo">
             🎬 Movie Manager
-          </Link>
+          </div>
         </div>
         <div className="nav-menu">
           {menuItems.map(item => (
