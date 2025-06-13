@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MovieCard from '../MovieCard/MovieCard';
 import { POPULAR_MOVIES_URL } from '../../config/api-config';
+import { BASE_URL } from '../../config/api-config';
 import './Accueil.css';
 
 const Accueil = () => {
@@ -16,7 +17,7 @@ const Accueil = () => {
       try {
         setLoading(true);
         setError('');
-        const response = await fetch(POPULAR_MOVIES_URL);
+        const response = await fetch( POPULAR_MOVIES_URL);
         if (!response.ok) throw new Error('Erreur lors du chargement des films');
         const data = await response.json();
         setMovies(data.results || []);
